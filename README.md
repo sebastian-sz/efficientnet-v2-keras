@@ -1,2 +1,2 @@
 # efficientnet-v2-keras
-Efficientnet V2 adapted to Keras functional API.
+This repository is a work in progress.
