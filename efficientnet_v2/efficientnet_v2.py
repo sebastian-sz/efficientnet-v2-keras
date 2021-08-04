@@ -1,6 +1,7 @@
 """Code for EfficientNetV2 models."""
 import copy
 import math
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 import tensorflow as tf
 from tensorflow.python.keras import backend
@@ -34,7 +35,7 @@ def mb_conv_block(
     survival_probability: float = 0.8,
     name: str = "",
 ):
-    """Todo: add docstring."""
+    """Create MBConv block: Mobile Inverted Residual Bottleneck."""
     bn_axis = 3 if backend.image_data_format() == "channels_last" else 1
 
     # Expansion phase
@@ -142,7 +143,7 @@ def fused_mb_conv_block(
     survival_probability: float = 0.8,
     name: str = "",
 ):
-    """Todo: add docstring."""
+    """Fused MBConv Block: Fusing the proj conv1x1 and depthwise_conv into a conv2d."""
     bn_axis = 3 if backend.image_data_format() == "channels_last" else 1
 
     filters = input_filters * expand_ratio
@@ -227,26 +228,73 @@ def fused_mb_conv_block(
 
 
 def EfficientNetV2(
-    width_coefficient,
-    depth_coefficient,
-    default_size,
+    width_coefficient: float,
+    depth_coefficient: float,
+    default_size: int,
     dropout_rate=0.2,
-    drop_connect_rate=0.2,
-    depth_divisor=8,
-    min_depth=8,
-    bn_momentum=0.9,
+    drop_connect_rate: float = 0.2,
+    depth_divisor: int = 8,
+    min_depth: int = 8,
+    bn_momentum: float = 0.9,
     activation="swish",
-    blocks_args=None,
-    model_name="efficientnetv2",
-    include_top=True,
-    weights="imagenet",
+    blocks_args: List[Dict[str, Any]] = None,
+    model_name: str = "efficientnetv2",
+    include_top: bool = True,
+    weights: str = "imagenet",
     input_tensor=None,
-    input_shape=None,
+    input_shape: Tuple[int, int, int] = None,
     pooling=None,
-    classes=1000,
-    classifier_activation="softmax",
+    classes: int = 1000,
+    classifier_activation: Union[str, Callable] = "softmax",
 ):
-    """Todo: add docstring."""
+    """Instantiate the EfficientNetV2 architecture using given provided parameters.
+
+    :param width_coefficient: scaling coefficient for network width.
+    :param depth_coefficient: scaling coefficient for network depth.
+    :param default_size: default input image size.
+    :param dropout_rate: dropout rate before final classifier layer.
+    :param drop_connect_rate: dropout rate at skip connections.
+    :param depth_divisor: a unit of network width.
+    :param min_depth: integer, minimum number of filters.
+    :param bn_momentum: Momentum parameter for Batch Normalization layers.
+    :param activation: activation function.
+    :param blocks_args: list of dicts, parameters to construct block modules.
+    :param model_name: name of the model.
+    :param include_top: whether to include the fully-connected layer at the top of
+        the network.
+    :param weights: one of `None` (random initialization), 'imagenet'
+        (pre-training on ImageNet), 'imagenet++ (pretrained on Imagenet 21k and fine
+        tuned on 1k)' or the path to the weights file to be loaded.
+    :param input_tensor: optional Keras tensor (i.e. output of `layers.Input()`) to use
+        as image input for the model.
+    :param input_shape: optional shape tuple, only to be specified if `include_top` is
+        False. It should have exactly 3 inputs channels.
+    :param  pooling: optional pooling mode for feature extraction when `include_top`
+        is `False`.
+        - `None` means that the output of the model will be
+            the 4D tensor output of the
+            last convolutional layer.
+        - `avg` means that global average pooling
+            will be applied to the output of the
+            last convolutional layer, and thus
+            the output of the model will be a 2D tensor.
+        - `max` means that global max pooling will
+            be applied.
+    :param classes: optional number of classes to classify images into, only to be
+        specified if `include_top` is True, and if no `weights` argument is specified.
+    :param classifier_activation: A `str` or callable. The activation function to use
+        on the "top" layer. Ignored unless `include_top=True`. Set
+        `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns:
+        A `tf.keras.Model` instance.
+
+    Raises:
+        ValueError: in case of invalid argument for `weights`, or invalid input
+        shape.
+        ValueError: if `classifier_activation` is not `softmax` or `None` when
+        using a pretrained top layer.
+    """
     if not blocks_args:
         blocks_args = BLOCKS_ARGS[model_name]
 
@@ -409,7 +457,7 @@ def EfficientNetV2S(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 S variant."""
     return EfficientNetV2(
         width_coefficient=1.0,
         depth_coefficient=1.0,
@@ -436,7 +484,7 @@ def EfficientNetV2M(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 M variant."""
     return EfficientNetV2(
         width_coefficient=1.0,
         depth_coefficient=1.0,
@@ -463,7 +511,7 @@ def EfficientNetV2L(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 L variant."""
     return EfficientNetV2(
         width_coefficient=1.0,
         depth_coefficient=1.0,
@@ -490,7 +538,7 @@ def EfficientNetV2B0(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 B0 variant."""
     return EfficientNetV2(
         width_coefficient=1.0,
         depth_coefficient=1.0,
@@ -517,7 +565,7 @@ def EfficientNetV2B1(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 B1 variant."""
     return EfficientNetV2(
         width_coefficient=1.0,
         depth_coefficient=1.1,
@@ -544,7 +592,7 @@ def EfficientNetV2B2(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 B2 variant."""
     return EfficientNetV2(
         width_coefficient=1.1,
         depth_coefficient=1.2,
@@ -571,7 +619,7 @@ def EfficientNetV2B3(
     classifier_activation="softmax",
     **kwargs,
 ):
-    """Todo: add docstring."""
+    """Create EfficientNetV2 B3 variant."""
     return EfficientNetV2(
         width_coefficient=1.2,
         depth_coefficient=1.4,
