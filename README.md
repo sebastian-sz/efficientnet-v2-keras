@@ -12,7 +12,6 @@ I reworte them this way so that the usage is similar to `keras.applications`.
 The model's weights are converted from [original repository](https://github.com/google/automl/tree/master/efficientnetv2).
 
 # Quickstart
-# Quickstart
 You can use these models, similar to `keras.applications`:
 
 ```python
