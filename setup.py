@@ -1,5 +1,5 @@
 from pkg_resources import DistributionNotFound, get_distribution
-from setuptools import find_packages, setup
+from setuptools import setup
 
 with open("README.md", encoding="utf-8") as f:
     long_description = "\n" + f.read()
@@ -44,6 +44,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
     ],
-    packages=find_packages(),
+    packages=["efficientnet_v2"],
     install_requires=_get_tensorflow_requirement(),
 )
