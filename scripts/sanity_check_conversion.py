@@ -214,7 +214,12 @@ class TestLocalOutputConsistency(parameterized.TestCase):
 
     @staticmethod
     def _pre_process_image(image: tf.Tensor, input_shape: Tuple[int, int]) -> tf.Tensor:
-        # TODO: add source from original repo.
+        """Preprocessing function from original repository.
+
+        The official code can be found at
+        https://github.com/google/automl/blob/c2ce63a63592d7b23cd023f5a519967029619fe2/efficientnetv2/preprocessing.py#L58
+        The only difference is that I'm omitting the `image.set_shape` part.
+        """
         image = (tf.cast(image, tf.float32) - 128.0) / 128.0
         transformations = "crop" if input_shape[0] < 320 else ""
         if "crop" in transformations:
