@@ -130,6 +130,7 @@ OUTPUT_TEST_PARAMS = [
 class TestKerasVSOriginalOutputConsistency(parameterized.TestCase):
     image_path = os.path.join(ROOT_DIR, "tests/assets/panda.jpg")
     image = tf.image.decode_png(tf.io.read_file(image_path))
+    _tolerance = 1e-5
 
     @parameterized.named_parameters(OUTPUT_TEST_PARAMS)
     def test_keras_and_original_outputs_the_same(
@@ -153,7 +154,9 @@ class TestKerasVSOriginalOutputConsistency(parameterized.TestCase):
 
         original_outputs = np.load(original_outputs)
 
-        tf.debugging.assert_near(outputs, original_outputs)
+        tf.debugging.assert_near(
+            outputs, original_outputs, atol=self._tolerance, rtol=self._tolerance
+        )
 
     @staticmethod
     def _pre_process_image(image: tf.Tensor, input_shape: Tuple[int, int]) -> tf.Tensor:
