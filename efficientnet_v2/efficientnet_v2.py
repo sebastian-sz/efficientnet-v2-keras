@@ -11,6 +11,32 @@ from tensorflow.python.lib.io import file_io
 
 from efficientnet_v2.blocks_args import BLOCKS_ARGS
 
+BASE_WEIGHTS_URL = (
+    "https://github.com/sebastian-sz/efficientnet-v2-keras/releases/download/v1.0/"
+)
+WEIGHT_HASHES = {
+    "efficientnetv2-b0.h5": "c6b770b1c8cf213eb1399e9fbedf1871",
+    "efficientnetv2-b1.h5": "79059d1067a7779887d3859706ef8480",
+    "efficientnetv2-b2.h5": "b6c5c911b3cd7c8863d2aeb55b8ee1ee",
+    "efficientnetv2-b3.h5": "e6bc1b2f04140a8eb1bf03d66343ea3a",
+    "efficientnetv2-s.h5": "f0b49bdc045de8889f35234618edb59f",
+    "efficientnetv2-m.h5": "9fb1ef92f80797b31fee575d1c0a24fe",
+    "efficientnetv2-l.h5": "1e5d90cc5102212ba38cd7194c8d97d7",
+    "efficientnetv2-b0_notop.h5": "8648ed1dd0b260705d02d29f8c651e91",
+    "efficientnetv2-b1_notop.h5": "b859b006bc3fdbcad68be88c757d1b0a",
+    "efficientnetv2-b2_notop.h5": "869924ed4837062b6a75f241b87c5afc",
+    "efficientnetv2-b3_notop.h5": "090dd36d2024381bbbad4f8e4edcc30e",
+    "efficientnetv2-s_notop.h5": "36cd089046169b7a1a2b3654ec2fa2a8",
+    "efficientnetv2-m_notop.h5": "87a2dcf21014c367218c8495197fb35c",
+    "efficientnetv2-l_notop.h5": "71f80290f1ae93e71c9ddd11e05ba721",
+    "efficientnetv2-s-21k-ft1k.h5": "73d4916795840bb6cc3f1cd109e6858c",
+    "efficientnetv2-m-21k-ft1k.h5": "7e4671a02dfe2673902f48c371bdbfd1",
+    "efficientnetv2-l-21k-ft1k.h5": "2ad5eaaf1d1a48b3d7b544f306eaca51",
+    "efficientnetv2-s-21k-ft1k_notop.h5": "534a11a6a4517d67b4d6dc021e642716",
+    "efficientnetv2-m-21k-ft1k_notop.h5": "805410db76a6c7ada3202c4b61c40fc4",
+    "efficientnetv2-l-21k-ft1k_notop.h5": "7a1233fdfe370c2a2e33a1b0af33f000",
+}
+
 CONV_KERNEL_INITIALIZER = {
     "class_name": "VarianceScaling",
     "config": {"scale": 2.0, "mode": "fan_out", "distribution": "truncated_normal"},
@@ -315,6 +341,11 @@ def EfficientNetV2(
             'If using `weights` as `"imagenet"` or `"imagenet++"` with `include_top`'
             " as true, `classes` should be 1000"
         )
+    if weights == "imagenet++" and model_name.split("-")[-1] not in {"s", "m", "l"}:
+        raise ValueError(
+            "Weights pretrained on 21k and fine tuned on 1k are only"
+            "available for s-m-l model variants."
+        )
 
     # Determine proper input shape
     input_shape = imagenet_utils.obtain_input_shape(
@@ -323,7 +354,7 @@ def EfficientNetV2(
         min_size=32,
         data_format=backend.image_data_format(),
         require_flatten=include_top,
-        weights=weights,  # TODO: handle imagenet++
+        weights="imagenet" if weights in {"imagenet", "imagenet++"} else weights,
     )
 
     if input_tensor is None:
@@ -442,7 +473,28 @@ def EfficientNetV2(
     # Create model.
     model = tf.keras.Model(inputs, x, name=model_name)
 
-    # TODO: weights loading logic.
+    # Download weights:
+    if weights == "imagenet" or weights == "imagenet++":
+        weights_name = model_name
+
+        if weights.endswith("++"):
+            weights_name += "-21k-ft1k"
+
+        if not include_top:
+            weights_name += "notop"
+
+        filename = f"{weights_name}.h5"
+        download_url = BASE_WEIGHTS_URL + filename
+        weights_path = tf.keras.utils.get_file(
+            fname=filename,
+            origin=download_url,
+            cache_subdir="models",
+            file_hash=WEIGHT_HASHES[filename],
+        )
+        model.load_weights(weights_path)
+
+    elif weights is not None:
+        model.load_weights(weights)
 
     return model
 

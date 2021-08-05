@@ -106,18 +106,18 @@ python scripts/convert_weights.py \
 # Notop
 python scripts/convert_weights.py \
     --model s \
-    --ckpt weights/original_weights/efficientnetv2-s-21k-ft1k.tgz \
+    --ckpt weights/original_weights/efficientnetv2-s-21k-ft1k \
     --output weights/efficientnetv2-s-21k-ft1k_notop.h5 \
     --include_top=False
 
 python scripts/convert_weights.py \
     --model m \
-    --ckpt weights/original_weights/efficientnetv2-m-21k-ft1k.tgz \
+    --ckpt weights/original_weights/efficientnetv2-m-21k-ft1k \
     --output weights/efficientnetv2-m-21k-ft1k_notop.h5 \
     --include_top=False
 
 python scripts/convert_weights.py \
     --model l \
-    --ckpt weights/original_weights/efficientnetv2-l-21k-ft1k.tgz \
+    --ckpt weights/original_weights/efficientnetv2-l-21k-ft1k \
     --output weights/efficientnetv2-l-21k-ft1k_notop.h5 \
     --include_top=False
