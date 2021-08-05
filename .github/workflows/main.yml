@@ -32,6 +32,15 @@ jobs:
       - name: Import
         run: python -c "from efficientnet_v2 import EfficientNetV2B0"
 
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: docker build -t keras_efficientnet_v2 .
+      - name: Run
+        run: docker run --rm keras_efficientnet_v2 python -c "from efficientnet_v2 import EfficientNetV2B0"
+
   test:
       runs-on: ubuntu-latest
       strategy:
