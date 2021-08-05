@@ -481,7 +481,7 @@ def EfficientNetV2(
             weights_name += "-21k-ft1k"
 
         if not include_top:
-            weights_name += "notop"
+            weights_name += "_notop"
 
         filename = f"{weights_name}.h5"
         download_url = BASE_WEIGHTS_URL + filename
