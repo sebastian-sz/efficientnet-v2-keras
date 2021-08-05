@@ -4,9 +4,9 @@ import subprocess
 import tempfile
 from typing import Callable, Tuple
 
-from absl.testing import absltest, parameterized
-import tensorflow as tf
 import onnxruntime
+import tensorflow as tf
+from absl.testing import absltest, parameterized
 from psutil import virtual_memory
 
 from tests.test_efficientnet_v2 import TEST_PARAMS
@@ -29,7 +29,7 @@ class TestONNXConversion(parameterized.TestCase):
     saved_model_path = os.path.join(tempfile.mkdtemp(), "saved_model")
     onnx_model_path = os.path.join(tempfile.mkdtemp(), "model.onnx")
 
-    _tolerance = 1e-5
+    _tolerance = 1e-4
 
     def tearDown(self) -> None:
         if os.path.exists(self.onnx_model_path):
@@ -39,10 +39,13 @@ class TestONNXConversion(parameterized.TestCase):
 
     @parameterized.named_parameters(TEST_PARAMS)
     def test_model_onnx_conversion(
-        self, model_fn: Callable, input_shape: Tuple[int, int],
+        self, model_fn: Callable, input_shape: Tuple[int, int]
     ):
-        model = model_fn(weights="imagenet", input_shape=(*input_shape, 3),
-                         classifier_activation=None)
+        model = model_fn(
+            weights="imagenet",
+            input_shape=(*input_shape, 3),
+            classifier_activation=None,
+        )
 
         # Skip test if not enough RAM:
         model_variant = model.name.split("-")[-1]

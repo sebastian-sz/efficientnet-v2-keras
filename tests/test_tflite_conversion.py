@@ -41,7 +41,7 @@ class TestTFLiteConversion(parameterized.TestCase):
         model = model_fn(weights="imagenet", input_shape=(*input_shape, 3))
 
         # Skip test if not enough RAM:
-        model_variant = model.name.split('-')[-1]
+        model_variant = model.name.split("-")[-1]
         if not self._enough_memory_to_convert(model_variant):
             self.skipTest(
                 "Not enough memory to convert to tflite. Need at least "

@@ -1,5 +1,4 @@
-from typing import Callable
-from typing import Tuple
+from typing import Callable, Tuple
 
 import tensorflow_model_optimization as tfmot
 from absl.testing import absltest, parameterized
