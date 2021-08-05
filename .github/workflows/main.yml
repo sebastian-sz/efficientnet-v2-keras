@@ -18,6 +18,20 @@ jobs:
           pip install pre-commit~=2.12
           make lint
 
+  pip-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+      - name: Install
+        run: |
+          pip install git+https://github.com/sebastian-sz/efficientnet-v2-keras@$GITHUB_HEAD_REF
+      - name: Import
+        run: python -c "from efficientnet_v2 import EfficientNetV2B0"
+
   test:
       runs-on: ubuntu-latest
       strategy:
