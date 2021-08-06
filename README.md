@@ -59,12 +59,12 @@ The only requirements are Tensorflow 2.2+ and Python 3.6+.
 ### Option B: Build from source
 ```bash
 git clone https://github.com/sebastian-sz/efficientnet-v2-keras.git  
-cd efficientnet_lite_keras  
+cd efficientnet-v2-keras  
 pip install .
 ```
 
 ### Option C: (alternatively) no install:
-If you do not want to install you could just drop the `efficientnet_lite/` directory, directly into your project.
+If you do not want to install you could just drop the `efficientnet_v2/` directory, directly into your project.
 
 ### Option D: Docker
 You can also install this package as an extension to official Tensorflow docker container:
@@ -126,7 +126,7 @@ model.save("my_saved_model/")
 # Convert:
 !python -m tf2onnx.convert \
   --saved-model my_saved_model/ \
-  --output efficientnet_lite.onnx
+  --output efficientnet_v2.onnx
 ```
 # Original Weights
 The original weights are present in the
