@@ -1,6 +1,7 @@
 """Code for EfficientNetV2 models."""
 import copy
 import math
+import sys
 from typing import Any, Callable, Dict, List, Tuple, Union
 
 import tensorflow as tf
@@ -12,31 +13,33 @@ from tensorflow.python.lib.io import file_io
 from efficientnet_v2.blocks_args import BLOCKS_ARGS
 
 BASE_WEIGHTS_URL = (
-    "https://github.com/sebastian-sz/efficientnet-v2-keras/releases/download/v1.0/"
+    "https://github.com/sebastian-sz/efficientnet-v2-keras/releases/download/v2.0/"
 )
-WEIGHT_HASHES = {
-    "efficientnetv2-b0.h5": "c6b770b1c8cf213eb1399e9fbedf1871",
-    "efficientnetv2-b1.h5": "79059d1067a7779887d3859706ef8480",
-    "efficientnetv2-b2.h5": "b6c5c911b3cd7c8863d2aeb55b8ee1ee",
-    "efficientnetv2-b3.h5": "e6bc1b2f04140a8eb1bf03d66343ea3a",
-    "efficientnetv2-s.h5": "f0b49bdc045de8889f35234618edb59f",
-    "efficientnetv2-m.h5": "9fb1ef92f80797b31fee575d1c0a24fe",
-    "efficientnetv2-l.h5": "1e5d90cc5102212ba38cd7194c8d97d7",
-    "efficientnetv2-b0_notop.h5": "8648ed1dd0b260705d02d29f8c651e91",
-    "efficientnetv2-b1_notop.h5": "b859b006bc3fdbcad68be88c757d1b0a",
-    "efficientnetv2-b2_notop.h5": "869924ed4837062b6a75f241b87c5afc",
-    "efficientnetv2-b3_notop.h5": "090dd36d2024381bbbad4f8e4edcc30e",
-    "efficientnetv2-s_notop.h5": "36cd089046169b7a1a2b3654ec2fa2a8",
-    "efficientnetv2-m_notop.h5": "87a2dcf21014c367218c8495197fb35c",
-    "efficientnetv2-l_notop.h5": "71f80290f1ae93e71c9ddd11e05ba721",
-    "efficientnetv2-s-21k-ft1k.h5": "73d4916795840bb6cc3f1cd109e6858c",
-    "efficientnetv2-m-21k-ft1k.h5": "7e4671a02dfe2673902f48c371bdbfd1",
-    "efficientnetv2-l-21k-ft1k.h5": "2ad5eaaf1d1a48b3d7b544f306eaca51",
-    "efficientnetv2-s-21k-ft1k_notop.h5": "534a11a6a4517d67b4d6dc021e642716",
-    "efficientnetv2-m-21k-ft1k_notop.h5": "805410db76a6c7ada3202c4b61c40fc4",
-    "efficientnetv2-l-21k-ft1k_notop.h5": "7a1233fdfe370c2a2e33a1b0af33f000",
-}
 
+WEIGHT_HASHES = {
+    "efficientnetv2-b0.h5": "040bd13d0e1120f3d3ff64dcb1b311da",
+    "efficientnetv2-b0_notop.h5": "0ee6a45fb049baaaf5dd710e50828382",
+    "efficientnetv2-b1.h5": "2e640a47676a72aab97fbcd5cdc5aee5",
+    "efficientnetv2-b1_notop.h5": "650f09a0e2d4282201b5187ac2709721",
+    "efficientnetv2-b2.h5": "ff25e799dd33de560322a2f0bfba1b53",
+    "efficientnetv2-b2_notop.h5": "4236cc709ddb4616c81c877b3f92457f",
+    "efficientnetv2-b3.h5": "7a9f26b46c88c64a428ca998fa31e9d4",
+    "efficientnetv2-b3_notop.h5": "cb807fb01931c554fd00ae79d5b9cf4d",
+    "efficientnetv2-l-21k-ft1k.h5": "78e5ffa224184f1481252a115a5f003d",
+    "efficientnetv2-l-21k-ft1k_notop.h5": "5a4795a11ae52a7d8626c9e20ba275a5",
+    "efficientnetv2-l.h5": "25db7bfb451abc977bcc4140c91c4e9e",
+    "efficientnetv2-l_notop.h5": "451021c40955e974b7627b9e588211a1",
+    "efficientnetv2-m-21k-ft1k.h5": "8f6f7ca84d948da4b93f4b9053c19413",
+    "efficientnetv2-m-21k-ft1k_notop.h5": "f670a1cb04aeed321c554c21f219f895",
+    "efficientnetv2-m.h5": "4766229c2bd41aa09c7271e3c3a5403d",
+    "efficientnetv2-m_notop.h5": "4bb03763f7be9b3829a3e640c358de17",
+    "efficientnetv2-s-21k-ft1k.h5": "62a850f1b111c4872277c18d64b928d4",
+    "efficientnetv2-s-21k-ft1k_notop.h5": "85d8dcc7a63523abea94469b833be01e",
+    "efficientnetv2-s.h5": "6cb2135fe05dbd9ced79348b8b76f05f",
+    "efficientnetv2-s_notop.h5": "551df41bf4f0951006926610e93c17c1",
+    "efficientnetv2-xl-21k-ft1k.h5": "f48b9f1c12effdf9d70a33d81eb9f5ca",
+    "efficientnetv2-xl-21k-ft1k_notop.h5": "a0cbe206c87e8fafe7434451e5ac79a9",
+}
 CONV_KERNEL_INITIALIZER = {
     "class_name": "VarianceScaling",
     "config": {"scale": 2.0, "mode": "fan_out", "distribution": "truncated_normal"},
@@ -341,10 +344,19 @@ def EfficientNetV2(
             'If using `weights` as `"imagenet"` or `"imagenet++"` with `include_top`'
             " as true, `classes` should be 1000"
         )
-    if weights == "imagenet++" and model_name.split("-")[-1] not in {"s", "m", "l"}:
+    if weights == "imagenet++" and model_name.split("-")[-1] not in {
+        "s",
+        "m",
+        "l",
+        "xl",
+    }:
         raise ValueError(
             "Weights pretrained on 21k and fine tuned on 1k are only"
             "available for s-m-l model variants."
+        )
+    if model_name.split("-")[-1] == "xl" and weights == "imagenet":
+        raise ValueError(
+            "This variant has not been released. For XL only imagenet++ is available."
         )
 
     # Determine proper input shape
@@ -424,7 +436,7 @@ def EfficientNetV2(
                 activation=activation,
                 bn_momentum=bn_momentum,
                 survival_probability=drop_connect_rate * b / blocks,
-                name="block{}{}_".format(i + 1, chr(j + 97)),
+                name=f"block{i+1}-{j+1:02d}_",
                 **args,
             )
             b += 1
@@ -686,3 +698,38 @@ def EfficientNetV2B3(
         classifier_activation=classifier_activation,
         **kwargs,
     )
+
+
+def EfficientNetV2XL(
+    include_top=True,
+    weights="imagenet",
+    input_tensor=None,
+    input_shape=None,
+    pooling=None,
+    classes=1000,
+    classifier_activation="softmax",
+    **kwargs,
+):
+    """Create EfficientNetV2 XL variant."""
+    # This model is so big that it's creation exceeds default recursion limit
+    current_limit = sys.getrecursionlimit()
+    target_limit = 2000
+    if current_limit < target_limit:
+        sys.setrecursionlimit(target_limit)
+
+    model = EfficientNetV2(
+        width_coefficient=1.0,
+        depth_coefficient=1.0,
+        default_size=512,
+        model_name="efficientnetv2-xl",
+        include_top=include_top,
+        weights=weights,
+        input_tensor=input_tensor,
+        input_shape=input_shape,
+        pooling=pooling,
+        classes=classes,
+        classifier_activation=classifier_activation,
+        **kwargs,
+    )
+
+    return model

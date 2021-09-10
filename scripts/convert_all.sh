@@ -103,6 +103,11 @@ python scripts/convert_weights.py \
     --ckpt weights/original_weights/efficientnetv2-l-21k-ft1k \
     --output weights/efficientnetv2-l-21k-ft1k.h5
 
+python scripts/convert_weights.py \
+    --model xl \
+    --ckpt weights/original_weights/efficientnetv2-xl-21k-ft1k \
+    --output weights/efficientnetv2-xl-21k-ft1k.h5
+
 # Notop
 python scripts/convert_weights.py \
     --model s \
@@ -120,4 +125,10 @@ python scripts/convert_weights.py \
     --model l \
     --ckpt weights/original_weights/efficientnetv2-l-21k-ft1k \
     --output weights/efficientnetv2-l-21k-ft1k_notop.h5 \
+    --include_top=False
+
+python scripts/convert_weights.py \
+    --model xl \
+    --ckpt weights/original_weights/efficientnetv2-xl-21k-ft1k \
+    --output weights/efficientnetv2-xl-21k-ft1k_notop.h5 \
     --include_top=False

@@ -8,6 +8,7 @@ from efficientnet_v2.efficientnet_v2 import (
     EfficientNetV2L,
     EfficientNetV2M,
     EfficientNetV2S,
+    EfficientNetV2XL,
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "EfficientNetV2S",
     "EfficientNetV2M",
     "EfficientNetV2L",
+    "EfficientNetV2XL",
 ]
