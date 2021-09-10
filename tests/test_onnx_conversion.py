@@ -21,6 +21,7 @@ MODEL_TO_MIN_MEMORY = {  # in GB
     "s": 6.5,
     "m": 9.5,
     "l": 14,
+    "xl": 22,
 }
 
 
@@ -41,8 +42,10 @@ class TestONNXConversion(parameterized.TestCase):
     def test_model_onnx_conversion(
         self, model_fn: Callable, input_shape: Tuple[int, int]
     ):
+        # Load imagenet++ for XL variant
+        weights_arg = "imagenet++" if input_shape == (512, 512) else "imagenet"
         model = model_fn(
-            weights="imagenet",
+            weights=weights_arg,
             input_shape=(*input_shape, 3),
             classifier_activation=None,
         )

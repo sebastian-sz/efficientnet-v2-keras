@@ -19,6 +19,7 @@ MODEL_TO_MIN_MEMORY = {  # in GB
     "s": 5,
     "m": 7,
     "l": 11,
+    "xl": 19,
 }
 
 
@@ -37,8 +38,10 @@ class TestTFLiteConversion(parameterized.TestCase):
         tf.keras.backend.clear_session()
 
         # Comparison will fail with random weights as we are comparing
-        # very low floats:
-        model = model_fn(weights="imagenet", input_shape=(*input_shape, 3))
+        # very low floats.
+        # Load XL variant with imagenet++ weights as these are only available.
+        weights_arg = "imagenet++" if input_shape == (512, 512) else "imagenet"
+        model = model_fn(weights=weights_arg, input_shape=(*input_shape, 3))
 
         # Skip test if not enough RAM:
         model_variant = model.name.split("-")[-1]

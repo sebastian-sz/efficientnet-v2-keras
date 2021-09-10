@@ -13,6 +13,7 @@ from efficientnet_v2.efficientnet_v2 import (
     EfficientNetV2L,
     EfficientNetV2M,
     EfficientNetV2S,
+    EfficientNetV2XL,
 )
 from root_dir import ROOT_DIR
 
@@ -122,6 +123,17 @@ OUTPUT_TEST_PARAMS = [
             ROOT_DIR,
             "tests/assets/original_outputs/"
             "efficientnetv2-l_480_original_logits_21k-ft1k.npy",
+        ),
+    },
+    {
+        "testcase_name": "xl-21k-ft1k",
+        "model_fn": EfficientNetV2XL,
+        "input_shape": (512, 512),
+        "weights_arg": "imagenet++",
+        "original_outputs": os.path.join(
+            ROOT_DIR,
+            "tests/assets/original_outputs/"
+            "efficientnetv2-xl_512_original_logits_21k-ft1k.npy",
         ),
     },
 ]

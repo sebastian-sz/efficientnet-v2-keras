@@ -14,6 +14,7 @@ from efficientnet_v2.efficientnet_v2 import (
     EfficientNetV2L,
     EfficientNetV2M,
     EfficientNetV2S,
+    EfficientNetV2XL,
 )
 
 FLAGS = flags.FLAGS
@@ -49,6 +50,7 @@ def main(argv):
         "s": (EfficientNetV2S, (384, 384)),
         "m": (EfficientNetV2M, (480, 480)),
         "l": (EfficientNetV2L, (480, 480)),
+        "xl": (EfficientNetV2XL, (512, 512)),
     }
 
     model_fn, input_shape = arg_to_model_and_shape[FLAGS.model]
@@ -190,6 +192,8 @@ def _get_blocks_layer_map(
     tf_block_name = var_name.split("/")[1]
     keras_block_name = tf_to_keras_block_name_map[tf_block_name]
 
+    keras_prefix = None
+
     # 1st blocks only have project layer:
     if keras_block_name[5] == "1":
         if layer_type == "conv2d":
@@ -233,6 +237,9 @@ def _get_blocks_layer_map(
             keras_prefix = f"{keras_block_name}_bn/"
         elif layer_type == "tpu_batch_normalization_2":
             keras_prefix = f"{keras_block_name}_project_bn/"
+
+    if keras_prefix is None:
+        raise ValueError("Variable name could not be matched.")
 
     return {var_name: f"{keras_prefix}{last_name}:0"}
 

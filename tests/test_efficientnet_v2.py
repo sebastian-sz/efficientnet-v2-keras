@@ -13,6 +13,7 @@ from efficientnet_v2.efficientnet_v2 import (
     EfficientNetV2L,
     EfficientNetV2M,
     EfficientNetV2S,
+    EfficientNetV2XL,
 )
 
 TEST_PARAMS = [
@@ -23,6 +24,7 @@ TEST_PARAMS = [
     {"testcase_name": "s", "model_fn": EfficientNetV2S, "input_shape": (384, 384)},
     {"testcase_name": "m", "model_fn": EfficientNetV2M, "input_shape": (480, 480)},
     {"testcase_name": "l", "model_fn": EfficientNetV2L, "input_shape": (480, 480)},
+    {"testcase_name": "xl", "model_fn": EfficientNetV2XL, "input_shape": (512, 512)},
 ]
 
 
@@ -56,6 +58,9 @@ class TestEfficientNetV2Unit(parameterized.TestCase):
     def tearDown(self) -> None:
         if os.path.exists(self.model_path):
             os.remove(self.model_path)
+
+    def setUp(self):
+        tf.keras.backend.clear_session()
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ from efficientnet_v2.efficientnet_v2 import (
     EfficientNetV2L,
     EfficientNetV2M,
     EfficientNetV2S,
+    EfficientNetV2XL,
 )
 from root_dir import ROOT_DIR
 
@@ -123,6 +124,17 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
             "efficientnetv2-l_480_original_logits_21k-ft1k.npy",
         ),
     },
+    {
+        "testcase_name": "xl-21k-ft1k",
+        "model_fn": EfficientNetV2XL,
+        "input_shape": (512, 512),
+        "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-xl-21k-ft1k.h5"),
+        "original_outputs": os.path.join(
+            ROOT_DIR,
+            "tests/assets/original_outputs/"
+            "efficientnetv2-xl_512_original_logits_21k-ft1k.npy",
+        ),
+    },
 ]
 
 FEATURE_EXTRACTION_TEST_PARAMS = [
@@ -174,6 +186,15 @@ FEATURE_EXTRACTION_TEST_PARAMS = [
         "input_shape": (480, 480),
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-l_notop.h5"),
         "expected_feature_shape": (1, 15, 15, 1280),
+    },
+    {
+        "testcase_name": "xl-fe",
+        "model_fn": EfficientNetV2XL,
+        "input_shape": (512, 512),
+        "weights_path": os.path.join(
+            ROOT_DIR, "weights/efficientnetv2-xl-21k-ft1k_notop.h5"
+        ),
+        "expected_feature_shape": (1, 16, 16, 1280),
     },
 ]
 

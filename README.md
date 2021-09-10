@@ -1,3 +1,11 @@
+EfficientNetV2 models rewriteen in Keras functional API.
+
+### Changelog:
+* 10 Sept. 2021 - Added XL model variant.
+    * Changed layer naming convention.
+    * Rexported weights.
+
+
 # Table of contens
 1. [Introduction](https://github.com/sebastian-sz/efficientnet-v2-keras#introduction)
 2. [Quickstart](https://github.com/sebastian-sz/efficientnet-v2-keras#quickstart)
