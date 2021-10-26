@@ -38,6 +38,7 @@ flags.DEFINE_bool(
     default=False,
     help="Whether to use Exponential Moving Average variables during conversion.",
 )
+flags.DEFINE_integer("num_classes", default=1000, help="Number of output classes.")
 
 
 def main(argv):
@@ -55,7 +56,10 @@ def main(argv):
 
     model_fn, input_shape = arg_to_model_and_shape[FLAGS.model]
     keras_model = model_fn(
-        weights=None, input_shape=(*input_shape, 3), include_top=FLAGS.include_top
+        weights=None,
+        input_shape=(*input_shape, 3),
+        include_top=FLAGS.include_top,
+        classes=FLAGS.num_classes,
     )
 
     # Create mapping from keras to tensorflow ckpt blocks:
