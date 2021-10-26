@@ -5,6 +5,7 @@ import sys
 from typing import Any, Callable, Dict, List, Tuple, Union
 
 import tensorflow as tf
+from absl import logging
 from tensorflow.python.keras import backend
 from tensorflow.python.keras.applications import imagenet_utils
 from tensorflow.python.keras.utils import layer_utils
@@ -17,6 +18,7 @@ BASE_WEIGHTS_URL = (
 )
 
 WEIGHT_HASHES = {
+    # Imagenet 1k
     "efficientnetv2-b0.h5": "040bd13d0e1120f3d3ff64dcb1b311da",
     "efficientnetv2-b0_notop.h5": "0ee6a45fb049baaaf5dd710e50828382",
     "efficientnetv2-b1.h5": "2e640a47676a72aab97fbcd5cdc5aee5",
@@ -25,18 +27,44 @@ WEIGHT_HASHES = {
     "efficientnetv2-b2_notop.h5": "4236cc709ddb4616c81c877b3f92457f",
     "efficientnetv2-b3.h5": "7a9f26b46c88c64a428ca998fa31e9d4",
     "efficientnetv2-b3_notop.h5": "cb807fb01931c554fd00ae79d5b9cf4d",
-    "efficientnetv2-l-21k-ft1k.h5": "78e5ffa224184f1481252a115a5f003d",
-    "efficientnetv2-l-21k-ft1k_notop.h5": "5a4795a11ae52a7d8626c9e20ba275a5",
-    "efficientnetv2-l.h5": "25db7bfb451abc977bcc4140c91c4e9e",
-    "efficientnetv2-l_notop.h5": "451021c40955e974b7627b9e588211a1",
-    "efficientnetv2-m-21k-ft1k.h5": "8f6f7ca84d948da4b93f4b9053c19413",
-    "efficientnetv2-m-21k-ft1k_notop.h5": "f670a1cb04aeed321c554c21f219f895",
     "efficientnetv2-m.h5": "4766229c2bd41aa09c7271e3c3a5403d",
     "efficientnetv2-m_notop.h5": "4bb03763f7be9b3829a3e640c358de17",
-    "efficientnetv2-s-21k-ft1k.h5": "62a850f1b111c4872277c18d64b928d4",
-    "efficientnetv2-s-21k-ft1k_notop.h5": "85d8dcc7a63523abea94469b833be01e",
     "efficientnetv2-s.h5": "6cb2135fe05dbd9ced79348b8b76f05f",
     "efficientnetv2-s_notop.h5": "551df41bf4f0951006926610e93c17c1",
+    "efficientnetv2-l.h5": "25db7bfb451abc977bcc4140c91c4e9e",
+    "efficientnetv2-l_notop.h5": "451021c40955e974b7627b9e588211a1",
+    # Imagenet 21k
+    "efficientnetv2-b0-21k.h5": "8635973271bb9a88eaee549ff54aedfe",
+    "efficientnetv2-b0-21k_notop.h5": "3f28d90919518ef426073dbcb17e3021",
+    "efficientnetv2-b1-21k.h5": "769d9b75be3438f1b6097235bde22028",
+    "efficientnetv2-b1-21k_notop.h5": "611cfd8977562c93bc4959992ad9bd48",
+    "efficientnetv2-b2-21k.h5": "d9398206a6d2859d3bf45f6f524caa08",
+    "efficientnetv2-b2-21k_notop.h5": "7467240653f73dd438e87af589a859ad",
+    "efficientnetv2-b3-21k.h5": "a162c5a30af3244445f6a633ae29f82c",
+    "efficientnetv2-b3-21k_notop.h5": "d2629d05829af1450432e2f114ce2917",
+    "efficientnetv2-s-21k.h5": "6629e2eb68b6ebc922e009f6f800ad51",
+    "efficientnetv2-s-21k_notop.h5": "c8ddbae1744f089f630f2bdbad5fe2fa",
+    "efficientnetv2-m-21k.h5": "996706525ce91d0113b2653099c64ec9",
+    "efficientnetv2-m-21k_notop.h5": "7691b54d75412ca020aacfcb2a5837c6",
+    "efficientnetv2-l-21k.h5": "43ae5d74761ce151bbc0fb552184e378",
+    "efficientnetv2-l-21k_notop.h5": "7ce647fe4de717b57a5fd6f2b3c82843",
+    "efficientnetv2-xl-21k.h5": "3b9760ecac79f6d0b0fe9648f14a2fed",
+    "efficientnetv2-xl-21k_notop.h5": "456d3fdcfc95bb460fcad7f0d8095773",
+    # Imagenet 21k-ft1k
+    "efficientnetv2-b0-21k-ft1k.h5": "bc8fe2c555e5a1229c378d0e84aa2703",
+    "efficientnetv2-b0-21k-ft1k_notop.h5": "9963bc6b7aa74eac7036ab414dff9733",
+    "efficientnetv2-b1-21k-ft1k.h5": "872bddc747d40c6238c964fe73a3a1e6",
+    "efficientnetv2-b1-21k-ft1k_notop.h5": "f600737b414724d659c2bb7b5465aa22",
+    "efficientnetv2-b2-21k-ft1k.h5": "08fd7f48575c7a3a852c026f300e6a3f",
+    "efficientnetv2-b2-21k-ft1k_notop.h5": "78c435611d5aa909e725f40a7a1119bf",
+    "efficientnetv2-b3-21k-ft1k.h5": "c1a195289bb3574caac5f2c94cd7f011",
+    "efficientnetv2-b3-21k-ft1k_notop.h5": "99f66b5aa597a8834ba74f0b5d8a81d7",
+    "efficientnetv2-s-21k-ft1k.h5": "62a850f1b111c4872277c18d64b928d4",
+    "efficientnetv2-s-21k-ft1k_notop.h5": "85d8dcc7a63523abea94469b833be01e",
+    "efficientnetv2-m-21k-ft1k.h5": "8f6f7ca84d948da4b93f4b9053c19413",
+    "efficientnetv2-m-21k-ft1k_notop.h5": "f670a1cb04aeed321c554c21f219f895",
+    "efficientnetv2-l-21k-ft1k.h5": "78e5ffa224184f1481252a115a5f003d",
+    "efficientnetv2-l-21k-ft1k_notop.h5": "5a4795a11ae52a7d8626c9e20ba275a5",
     "efficientnetv2-xl-21k-ft1k.h5": "f48b9f1c12effdf9d70a33d81eb9f5ca",
     "efficientnetv2-xl-21k-ft1k_notop.h5": "a0cbe206c87e8fafe7434451e5ac79a9",
 }
@@ -292,7 +320,8 @@ def EfficientNetV2(
     :param include_top: whether to include the fully-connected layer at the top of
         the network.
     :param weights: one of `None` (random initialization), 'imagenet'
-        (pre-training on ImageNet), 'imagenet++ (pretrained on Imagenet 21k and fine
+        (pre-training on ImageNet), 'imagenet-21k' (pretrained on Imagenet21k),
+        'imagenet21k-ft1k' (pretrained on Imagenet 21k and fine
         tuned on 1k)' or the path to the weights file to be loaded.
     :param input_tensor: optional Keras tensor (i.e. output of `layers.Input()`) to use
         as image input for the model.
@@ -327,36 +356,47 @@ def EfficientNetV2(
     if not blocks_args:
         blocks_args = BLOCKS_ARGS[model_name]
 
+    if weights == "imagenet++":
+        weights = "imagenet-21k-ft1k"
+        logging.warning(
+            "imagenet++ argument is deprecated. "
+            "Please use imagenet-21k-ft1k instead."
+        )
+
     if not (
-        weights in {"imagenet", "imagenet++", None} or file_io.file_exists_v2(weights)
+        weights in {"imagenet", "imagenet-21k-ft1k", "imagenet-21k", None}
+        or file_io.file_exists_v2(weights)
     ):
         raise ValueError(
             "The `weights` argument should be either "
             "`None` (random initialization), `imagenet` "
             "(pre-training on ImageNet), "
-            "`imagenet++` (ImageNet21K pretrained and finetuned) "
-            "for s/m/l model variants,"
+            "`imagenet-21k-ft1k` (ImageNet21K pretrained and finetuned on Imagenet 1k),"
+            "`imagenet-21k` (pretrained on ImageNet21k) "
             "or the path to the weights file to be loaded."
+            f"Received weights={weights}"
         )
 
-    if weights == ("imagenet" or "imagenet++") and include_top and classes != 1000:
+    if (
+        weights == ("imagenet" or "imagenet-21k-ft1k")
+        and include_top
+        and classes != 1000
+    ):
         raise ValueError(
-            'If using `weights` as `"imagenet"` or `"imagenet++"` with `include_top`'
-            " as true, `classes` should be 1000"
+            f"If using `weights` as `'imagenet'` or `'imagenet-21k-ft1k'` with "
+            f"`include_top` as true, `classes` should be 1000. "
+            f"Received classes={classes}"
         )
-    if weights == "imagenet++" and model_name.split("-")[-1] not in {
-        "s",
-        "m",
-        "l",
-        "xl",
-    }:
+    if weights == "imagenet-21k" and include_top and classes != 21843:
         raise ValueError(
-            "Weights pretrained on 21k and fine tuned on 1k are only"
-            "available for s-m-l model variants."
+            f"If using `weights` as `imagenet-21k` with `include_top` as"
+            f"true, `classes` should be 21843. Received classes={classes}"
         )
+
     if model_name.split("-")[-1] == "xl" and weights == "imagenet":
         raise ValueError(
-            "This variant has not been released. For XL only imagenet++ is available."
+            "XL variant does not have `imagenet` weights released. Please use"
+            "`imagenet-21k` or `imagenet-21k-ft1k`."
         )
 
     # Determine proper input shape
@@ -366,7 +406,9 @@ def EfficientNetV2(
         min_size=32,
         data_format=backend.image_data_format(),
         require_flatten=include_top,
-        weights="imagenet" if weights in {"imagenet", "imagenet++"} else weights,
+        weights="imagenet"
+        if weights in {"imagenet", "imagenet-21k", "imagenet-21k-ft1k"}
+        else weights,
     )
 
     if input_tensor is None:
@@ -486,11 +528,13 @@ def EfficientNetV2(
     model = tf.keras.Model(inputs, x, name=model_name)
 
     # Download weights:
-    if weights == "imagenet" or weights == "imagenet++":
+    if weights in {"imagenet", "imagenet-21k", "imagenet-21k-ft1k"}:
         weights_name = model_name
 
-        if weights.endswith("++"):
+        if weights.endswith("21k-ft1k"):
             weights_name += "-21k-ft1k"
+        elif weights.endswith("21k"):
+            weights_name += "-21k"
 
         if not include_top:
             weights_name += "_notop"
