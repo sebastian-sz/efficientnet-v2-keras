@@ -15,7 +15,7 @@ class TestPreprocessingLayer(absltest.TestCase):
             image /= tf.constant(stddev_rgb, shape=(1, 1, 3), dtype=image.dtype)
             return image
 
-        input_frame = self.rng.uniform((1, 224, 224, 3))
+        input_frame = self.rng.uniform((1, 224, 224, 3), maxval=255)
         layer = get_preprocessing_layer("b0")
 
         original_preprocessed = original_preprocess(input_frame)
@@ -27,7 +27,7 @@ class TestPreprocessingLayer(absltest.TestCase):
         def original_preprocess(image):
             return (image - 128.0) / 128.0
 
-        input_frame = self.rng.uniform((1, 224, 224, 3))
+        input_frame = self.rng.uniform((1, 224, 224, 3), maxval=255)
         layer = get_preprocessing_layer("s")
 
         original_preprocessed = original_preprocess(input_frame)
