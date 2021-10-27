@@ -1,9 +1,12 @@
-EfficientNetV2 models rewriteen in Keras functional API.
+EfficientNetV2 models rewritten in Keras functional API.
 
 ### Changelog:
-* 10 Sept. 2021 - Added XL model variant.
+* Nov 2021: 
+  * added more weights variants from original repo.
+  * added option to manually get preprocessing layer.
+* Sept. 2021 - Added XL model variant.
     * Changed layer naming convention.
-    * Rexported weights.
+    * Re-exported weights.
 
 
 # Table of contens
@@ -15,7 +18,7 @@ EfficientNetV2 models rewriteen in Keras functional API.
 
 # Introduction
 This is a package with EfficientNetV2 model variants adapted to Keras functional API.
-I reworte them this way so that the usage is similar to `keras.applications`.
+I rewrote them this way so that the usage is similar to `keras.applications`.
 
 The model's weights are converted from [original repository](https://github.com/google/automl/tree/master/efficientnetv2).
 
@@ -54,7 +57,7 @@ model.fit(...)
 
 You can fine tune these models, just like other Keras models.  
 
-For end-to-end fine tuning and conversion examples check out the 
+For end-to-end fine-tuning and conversion examples check out the 
 [Colab Notebook](https://colab.research.google.com/drive/1CPTho02wBl48oOMqR2Wkj0xd90F3I9Uj?usp=sharing).
 
 # Installation
@@ -88,27 +91,59 @@ If all goes well you should be able to import:
 `from efficientnet_v2 import *`
 
 # How to use
-There are in total 7 model variants you can use:   
 
-| Model variant | Input shape | Weight variants* |
-|:-------------:|:-----------:|:----------------:|
-|       B0      | `224,224`   |   `imagenet`     |
-|       B1      | `240,240`   |   `imagenet`     |
-|       B2      | `260,260`   |   `imagenet`     |
-|       B3      | `300,300`   |   `imagenet`     |
-|       S       | `384,384`   |`imagenet, imagenet++`|
-|       M       | `480,480`   |`imagenet, imagenet++`|
-|       L       | `480,480`   |`imagenet, imagenet++`|
+### Pretrained weights
+Weights converted from original repository will be automatically downloaded, once you 
+pass `weights="imagenet"` (or `imagenet-21k`, `imagenet-21k-ft1k`) upon model creation.
 
-*`imagenet` means pretrained on Imagenet-1k dataset. `imagenet++` means 
-pretrained on Imagenet-21k and fine tuned on Imagenet-1k.
+There are 3 weight variants: 
+* `imagenet` - pretrained on Imagenet1k
+* `imagenet-21k` - pretrained on Imagenet21k
+* `imagenet-21k-ft1k` - pretrained on Imagenet21k and fine tuned on Imagenet1k
+
+Note: `imagenet` weights have not been released for `XL` variant.
+
+### Input shapes 
+The variants expect the following input shapes.
+
+| Model variant | Input shape |
+|:-------------:|:-----------:|
+|       B0      | `224,224`   |
+|       B1      | `240,240`   |
+|       B2      | `260,260`   |
+|       B3      | `300,300`   |
+|       S       | `384,384`   |
+|       M       | `480,480`   |
+|       L       | `480,480`   |
+|       XL      | `512,512`   |
 
 ### Preprocessing
-The models expect image values in range `-1:+1`. In more detail the preprocessing 
-function (for pretrained models) looks as follows:  
+##### Option A: preprocessing function
+The preprocessing is different for `Bx` and `S/M/L/XL` variants.
+`Bx`'s expect image normalized with Imagenet mean and stddev, while other's a simple 
+rescale:
 ```python
+import tensorflow as tf
+
+# Bx preprocessing:
 def preprocess(image):  # input image is in range 0-255.
+    mean_rgb = [0.485 * 255, 0.456 * 255, 0.406 * 255]
+    stddev_rgb = [0.229 * 255, 0.224 * 255, 0.225 * 255]
+    image -= tf.constant(mean_rgb, shape=(1, 1, 3), dtype=image.dtype)
+    image /= tf.constant(stddev_rgb, shape=(1, 1, 3), dtype=image.dtype)
+    return image
+    
+# S/M/L/XL preprocessing
+def preprocess(image):  
     return (tf.cast(image, dtype=tf.float32) - 128.00) / 128.00
+```
+##### Option B: Preprocessing layers
+or you can use [Preprocessing Layer](https://www.tensorflow.org/guide/keras/preprocessing_layers)
+included in this repo:
+```python
+from efficientnet_v2 import get_preprocessing_layer
+
+preprocessing_layer = get_preprocessing_layer(variant="b0")
 ```
 
 ### Fine-tuning
@@ -126,7 +161,7 @@ with open("efficientnet_lite.tflite", "wb") as file:
 ### ONNX
 The models are ONNX compatible. For ONNX Conversion you can use `tf2onnx` package:
 ```python
-!pip install tf2onnx~=1.8.4
+!pip install tf2onnx==1.8.4
 
 # Save the model in TF's Saved Model format:
 model.save("my_saved_model/")
