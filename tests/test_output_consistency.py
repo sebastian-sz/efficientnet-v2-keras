@@ -96,7 +96,7 @@ OUTPUT_TEST_PARAMS = [
         "testcase_name": "s-21k-ft1k",
         "model_fn": EfficientNetV2S,
         "input_shape": (384, 384),
-        "weights_arg": "imagenet++",
+        "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
             "tests/assets/original_outputs/"
@@ -107,7 +107,7 @@ OUTPUT_TEST_PARAMS = [
         "testcase_name": "m-21k-ft1k",
         "model_fn": EfficientNetV2M,
         "input_shape": (480, 480),
-        "weights_arg": "imagenet++",
+        "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
             "tests/assets/original_outputs/"
@@ -118,7 +118,7 @@ OUTPUT_TEST_PARAMS = [
         "testcase_name": "l-21k-ft1k",
         "model_fn": EfficientNetV2L,
         "input_shape": (480, 480),
-        "weights_arg": "imagenet++",
+        "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
             "tests/assets/original_outputs/"
@@ -129,7 +129,7 @@ OUTPUT_TEST_PARAMS = [
         "testcase_name": "xl-21k-ft1k",
         "model_fn": EfficientNetV2XL,
         "input_shape": (512, 512),
-        "weights_arg": "imagenet++",
+        "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
             "tests/assets/original_outputs/"
