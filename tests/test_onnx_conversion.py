@@ -29,7 +29,6 @@ MODEL_TO_MIN_MEMORY = {  # in GB
 
 class TestONNXConversion(parameterized.TestCase):
     rng = tf.random.Generator.from_non_deterministic_state()
-    saved_model_path = os.path.join(tempfile.mkdtemp(), "saved_model")
     onnx_model_path = os.path.join(tempfile.mkdtemp(), "model.onnx")
 
     _tolerance = 1e-4
@@ -37,8 +36,6 @@ class TestONNXConversion(parameterized.TestCase):
     def tearDown(self) -> None:
         if os.path.exists(self.onnx_model_path):
             os.remove(self.onnx_model_path)
-        if os.path.exists(self.saved_model_path):
-            shutil.rmtree(self.saved_model_path)
 
     @parameterized.named_parameters(TEST_PARAMS)
     def test_model_onnx_conversion(
@@ -61,8 +58,8 @@ class TestONNXConversion(parameterized.TestCase):
                 "Not enough memory to convert to onnx. Need at least "
                 f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
             )
-        inference_func = get_inference_function(model, input_shape)
 
+        inference_func = get_inference_function(model, input_shape)
         self._convert_onnx(inference_func)
 
         self.assertTrue(os.path.isfile(self.onnx_model_path))
