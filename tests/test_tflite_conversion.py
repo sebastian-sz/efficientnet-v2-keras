@@ -64,11 +64,30 @@ class TestTFLiteConversion(parameterized.TestCase):
             original_output, tflite_output, rtol=self._tolerance, atol=self._tolerance
         )
 
-    def _convert_and_save_tflite(self, model: tf.keras.Model):
-        converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    def _convert_and_save_tflite(
+        self, model: tf.keras.Model, input_shape: Tuple[int, int]
+    ):
+        inference_func = self._get_inference_function(model, input_shape)
+        concrete_func = inference_func.get_concrete_function()
+        converter = tf.lite.TFLiteConverter.from_concrete_functions([concrete_func])
+
         tflite_model = converter.convert()
         with open(self.tflite_path, "wb") as file:
             file.write(tflite_model)
+
+    @staticmethod
+    def _get_inference_function(model: tf.keras.Model, input_shape: Tuple[int, int]):
+        """Return convertible inference function."""
+
+        @tf.function(
+            input_signature=[
+                tf.TensorSpec(shape=(None, *input_shape, 3), dtype=tf.float32)
+            ]
+        )
+        def inference_func(inputs):
+            return model(inputs)
+
+        return inference_func
 
     def _run_tflite_inference(self, inputs: tf.Tensor) -> np.ndarray:
         interpreter = tf.lite.Interpreter(model_path=self.tflite_path)
