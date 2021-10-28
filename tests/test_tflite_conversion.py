@@ -8,6 +8,7 @@ from absl.testing import absltest, parameterized
 from psutil import virtual_memory
 
 from tests.test_efficientnet_v2 import TEST_PARAMS
+from tests.utils import get_inference_function
 
 # Some conversions are RAM hungry and will crash CI on smaller machines. We skip those
 # tests, not to break entire CI job.
@@ -51,7 +52,7 @@ class TestTFLiteConversion(parameterized.TestCase):
                 f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
             )
 
-        self._convert_and_save_tflite(model)
+        self._convert_and_save_tflite(model, input_shape)
         self.assertTrue(os.path.isfile(self.tflite_path))
 
         # Check outputs:
@@ -67,27 +68,13 @@ class TestTFLiteConversion(parameterized.TestCase):
     def _convert_and_save_tflite(
         self, model: tf.keras.Model, input_shape: Tuple[int, int]
     ):
-        inference_func = self._get_inference_function(model, input_shape)
+        inference_func = get_inference_function(model, input_shape)
         concrete_func = inference_func.get_concrete_function()
         converter = tf.lite.TFLiteConverter.from_concrete_functions([concrete_func])
 
         tflite_model = converter.convert()
         with open(self.tflite_path, "wb") as file:
             file.write(tflite_model)
-
-    @staticmethod
-    def _get_inference_function(model: tf.keras.Model, input_shape: Tuple[int, int]):
-        """Return convertible inference function."""
-
-        @tf.function(
-            input_signature=[
-                tf.TensorSpec(shape=(None, *input_shape, 3), dtype=tf.float32)
-            ]
-        )
-        def inference_func(inputs):
-            return model(inputs)
-
-        return inference_func
 
     def _run_tflite_inference(self, inputs: tf.Tensor) -> np.ndarray:
         interpreter = tf.lite.Interpreter(model_path=self.tflite_path)
