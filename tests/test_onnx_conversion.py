@@ -1,15 +1,17 @@
 import os
 import shutil
-import subprocess
 import tempfile
 from typing import Callable, Tuple
 
 import onnxruntime
 import tensorflow as tf
+import tf2onnx
 from absl.testing import absltest, parameterized
 from psutil import virtual_memory
+from tensorflow.python.types.core import GenericFunction
 
 from tests.test_efficientnet_v2 import TEST_PARAMS
+from tests.utils import get_inference_function
 
 # Some conversions are RAM hungry and will crash CI on smaller machines. We skip those
 # tests, not to break entire CI job.
@@ -59,10 +61,10 @@ class TestONNXConversion(parameterized.TestCase):
                 "Not enough memory to convert to onnx. Need at least "
                 f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
             )
+        inference_func = get_inference_function(model, input_shape)
 
-        model.save(self.saved_model_path)
+        self._convert_onnx(inference_func)
 
-        self._convert_onnx()
         self.assertTrue(os.path.isfile(self.onnx_model_path))
 
         # Compare outputs:
@@ -83,13 +85,13 @@ class TestONNXConversion(parameterized.TestCase):
         required_ram = MODEL_TO_MIN_MEMORY[model_name]
         return total_ram >= required_ram
 
-    def _convert_onnx(self):
-        command = (
-            f"python -m tf2onnx.convert "
-            f"--saved-model {self.saved_model_path} "
-            f"--output {self.onnx_model_path} "
+    def _convert_onnx(self, inference_func: GenericFunction):
+        model_proto, _ = tf2onnx.convert.from_function(
+            inference_func,
+            output_path=self.onnx_model_path,
+            input_signature=inference_func.input_signature,
         )
-        subprocess.run(command, shell=True, check=True)
+        return model_proto
 
 
 if __name__ == "__main__":
