@@ -159,7 +159,8 @@ with open("efficientnet_lite.tflite", "wb") as file:
 ```
 
 ### ONNX
-The models are ONNX compatible. For ONNX Conversion you can use `tf2onnx` package:
+The models are ONNX compatible. For ONNX Conversion you can use 
+[tf2onnx](https://github.com/onnx/tensorflow-onnx) package:
 ```python
 !pip install tf2onnx==1.8.4
 
