@@ -7,6 +7,11 @@ from efficientnet_v2 import get_preprocessing_layer
 class TestPreprocessingLayer(absltest.TestCase):
     rng = tf.random.Generator.from_non_deterministic_state()
 
+    # TODO
+    def setUp(self):
+        if float(tf.__version__[:-2]) < 2.4:
+            self.skipTest("Not supported for Tensorflow version below 2.4")
+
     def test_bx_variants_preprocessing_layer(self):
         def original_preprocess(image):
             mean_rgb = [0.485 * 255, 0.456 * 255, 0.406 * 255]

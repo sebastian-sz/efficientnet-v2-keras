@@ -72,4 +72,18 @@ jobs:
             pip install -r tests/requirements.txt
             pip install -e .
         - name: Run tests
-          run: make test
+#          run: make test
+          run: |
+            python tests/test_efficientnet_v2.py
+            python tests/test_preprocessing_layer.py
+        - name: Run tests output consistency
+          run: python tests/test_output_consistency.py
+        - name: Run tests onnx conversion
+          run: python tests/test_onnx_conversion.py
+        - name: Run tests tflite conversion
+          run: python tests/test_tflite_conversion.py
+        - name: Test tfmot
+          run: |
+            python tests/test_tfmot_pruning_compatibility.py
+            python tests/test_tfmot_qat_compatibility.py
+            python tests/test_tfmot_weight_clustering_compatibility.py

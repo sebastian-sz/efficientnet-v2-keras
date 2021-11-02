@@ -27,8 +27,7 @@ def main():
     _, lower, upper = tf_requirement.split(",")
 
     lower, upper = float(lower), float(upper)
-
-    matrix = list(np.arange(lower, upper, 0.1))
+    matrix = list(np.arange(lower, upper - 0.05, 0.1))
     matrix = [f"{x:.1f}" for x in matrix]
 
     print(json.dumps(matrix))
