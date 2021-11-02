@@ -11,3 +11,8 @@ updates:
     - "sebastian-sz"
   ignore:
   - dependency-name: pre-commit
+
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: "daily"
