@@ -19,7 +19,7 @@ MODEL_TO_MIN_MEMORY = {  # in GB
     "b1": 5,
     "b2": 5,
     "b3": 5.5,
-    "s": 6.5,
+    "s": 7.5,
     "m": 9.5,
     "l": 14,
     "xl": 22,
@@ -32,6 +32,9 @@ class TestONNXConversion(parameterized.TestCase):
 
     _tolerance = 1e-4
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     def tearDown(self) -> None:
         if os.path.exists(self.onnx_model_path):
             os.remove(self.onnx_model_path)
@@ -40,7 +43,6 @@ class TestONNXConversion(parameterized.TestCase):
     def test_model_onnx_conversion(
         self, model_fn: Callable, input_shape: Tuple[int, int]
     ):
-        tf.keras.backend.clear_session()
 
         # Skip test if not enough RAM:
         model_variant = self._testMethodName.split("_")[-1]

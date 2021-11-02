@@ -32,6 +32,9 @@ class TestEfficientNetV2Unit(parameterized.TestCase):
     rng = tf.random.Generator.from_non_deterministic_state()
     model_path = os.path.join(tempfile.mkdtemp(), "model.h5")
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     @parameterized.named_parameters(TEST_PARAMS)
     def test_model_inference(self, model_fn: Callable, input_shape: Tuple[int, int]):
         model = model_fn(weights=None, input_shape=(*input_shape, 3))

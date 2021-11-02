@@ -144,6 +144,9 @@ class TestKerasVSOriginalOutputConsistency(parameterized.TestCase):
     image = tf.image.decode_png(tf.io.read_file(image_path))
     _tolerance = 1e-5
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     @parameterized.named_parameters(OUTPUT_TEST_PARAMS)
     def test_keras_and_original_outputs_the_same(
         self,
@@ -153,7 +156,6 @@ class TestKerasVSOriginalOutputConsistency(parameterized.TestCase):
         original_outputs: str,
     ):
         """Run model on sample image and compare output with original."""
-        tf.keras.backend.clear_session()
 
         model = model_fn(
             weights=weights_arg,

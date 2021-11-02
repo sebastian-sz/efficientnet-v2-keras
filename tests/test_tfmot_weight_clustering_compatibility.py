@@ -1,5 +1,6 @@
 from typing import Callable, Tuple
 
+import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from absl.testing import absltest, parameterized
 
@@ -19,6 +20,9 @@ class TestWeightClusteringWrappers(parameterized.TestCase):
     ):
         model = model_fn(weights=None, input_shape=(*input_shape, 3))
         tfmot.clustering.keras.cluster_weights(model, **self.clustering_params)
+
+    def setUp(self):
+        tf.keras.backend.clear_session()
 
 
 if __name__ == "__main__":

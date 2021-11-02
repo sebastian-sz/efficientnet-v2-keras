@@ -17,7 +17,7 @@ MODEL_TO_MIN_MEMORY = {  # in GB
     "b1": 4,
     "b2": 4,
     "b3": 4.5,
-    "s": 5,
+    "s": 7,
     "m": 7,
     "l": 11,
     "xl": 19,
@@ -30,13 +30,15 @@ class TestTFLiteConversion(parameterized.TestCase):
 
     _tolerance = 1e-5
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     def tearDown(self) -> None:
         if os.path.exists(self.tflite_path):
             os.remove(self.tflite_path)
 
     @parameterized.named_parameters(TEST_PARAMS)
     def test_tflite_conversion(self, model_fn: Callable, input_shape: Tuple[int, int]):
-        tf.keras.backend.clear_session()
 
         # Skip test if not enough RAM:
         model_variant = self._testMethodName.split("_")[-1]

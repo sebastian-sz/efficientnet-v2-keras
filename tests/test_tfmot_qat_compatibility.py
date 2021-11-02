@@ -1,5 +1,6 @@
 from typing import Callable, Tuple
 
+import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from absl.testing import absltest, parameterized
 
@@ -18,6 +19,9 @@ class TestEfficientNetV2QATWrap(parameterized.TestCase):
         )
         model = model_fn(weights=None, input_shape=(*input_shape, 3))
         tfmot.quantization.keras.quantize_model(model)
+
+    def setUp(self):
+        tf.keras.backend.clear_session()
 
 
 if __name__ == "__main__":

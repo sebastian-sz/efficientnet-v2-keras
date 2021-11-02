@@ -15,6 +15,9 @@ class TestEfficientNetV2PruningWrapper(parameterized.TestCase):
         model = model_fn(weights=None, input_shape=(*input_shape, 3))
         tfmot.sparsity.keras.prune_low_magnitude(model)
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
 
 if __name__ == "__main__":
     absltest.main()
