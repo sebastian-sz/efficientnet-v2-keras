@@ -42,6 +42,14 @@ class TestONNXConversion(parameterized.TestCase):
     ):
         tf.keras.backend.clear_session()
 
+        # Skip test if not enough RAM:
+        model_variant = self._testMethodName.split("_")[-1]
+        if not self._enough_memory_to_convert(model_variant):
+            self.skipTest(
+                "Not enough memory to convert to onnx. Need at least "
+                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
+            )
+
         # Load imagenet-21k-ft1k for XL variant
         weights_arg = "imagenet-21k-ft1k" if input_shape == (512, 512) else "imagenet"
         model = model_fn(
@@ -49,14 +57,6 @@ class TestONNXConversion(parameterized.TestCase):
             input_shape=(*input_shape, 3),
             classifier_activation=None,
         )
-
-        # Skip test if not enough RAM:
-        model_variant = model.name.split("-")[-1]
-        if not self._enough_memory_to_convert(model_variant):
-            self.skipTest(
-                "Not enough memory to convert to onnx. Need at least "
-                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
-            )
 
         inference_func = get_inference_function(model, input_shape)
         self._convert_onnx(inference_func)
