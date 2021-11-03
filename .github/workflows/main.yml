@@ -41,11 +41,23 @@ jobs:
       - name: Run
         run: docker run --rm keras_efficientnet_v2 python -c "from efficientnet_v2 import EfficientNetV2B0"
 
+  generate_tests_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          VERSIONS=$(python .github/scripts/generate_tf_dependency_matrix.py)
+          echo "::set-output name=matrix::${VERSIONS//'%'/'%25'}"
+
   test:
+      needs: generate_tests_matrix
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          tensorflow-version: [ 2.2, 2.3, 2.4, 2.5, 2.6 ]
+          tensorflow-version:  ${{fromJson(needs.generate_tests_matrix.outputs.matrix)}}
       steps:
         - uses: actions/checkout@v2
         - name: Set up Python 3.6
