@@ -1,5 +1,6 @@
 from typing import Callable, Tuple
 
+import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from absl.testing import absltest, parameterized
 
@@ -12,6 +13,9 @@ class TestWeightClusteringWrappers(parameterized.TestCase):
         "number_of_clusters": 3,
         "cluster_centroids_init": centroid_initialization.DENSITY_BASED,
     }
+
+    def setUp(self):
+        tf.keras.backend.clear_session()
 
     @parameterized.named_parameters(TEST_PARAMS)
     def test_tfmot_weight_clustering_wrap(

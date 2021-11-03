@@ -30,27 +30,28 @@ class TestTFLiteConversion(parameterized.TestCase):
 
     _tolerance = 1e-5
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     def tearDown(self) -> None:
         if os.path.exists(self.tflite_path):
             os.remove(self.tflite_path)
 
     @parameterized.named_parameters(TEST_PARAMS)
     def test_tflite_conversion(self, model_fn: Callable, input_shape: Tuple[int, int]):
-        tf.keras.backend.clear_session()
+        # Skip test if not enough RAM:
+        model_variant = self._testMethodName.split("_")[-1]
+        if not self._enough_memory_to_convert(model_variant):
+            self.skipTest(
+                "Not enough memory to convert to tflite. Need at least "
+                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
+            )
 
         # Comparison will fail with random weights as we are comparing
         # very low floats.
         # Load XL variant with imagenet++ weights as these are only available.
         weights_arg = "imagenet-21k-ft1k" if input_shape == (512, 512) else "imagenet"
         model = model_fn(weights=weights_arg, input_shape=(*input_shape, 3))
-
-        # Skip test if not enough RAM:
-        model_variant = model.name.split("-")[-1]
-        if not self._enough_memory_to_convert(model_variant):
-            self.skipTest(
-                "Not enough memory to convert to tflite. Need at least "
-                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
-            )
 
         self._convert_and_save_tflite(model, input_shape)
         self.assertTrue(os.path.isfile(self.tflite_path))

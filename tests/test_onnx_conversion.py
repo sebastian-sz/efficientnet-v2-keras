@@ -1,5 +1,4 @@
 import os
-import shutil
 import tempfile
 from typing import Callable, Tuple
 
@@ -8,7 +7,6 @@ import tensorflow as tf
 import tf2onnx
 from absl.testing import absltest, parameterized
 from psutil import virtual_memory
-from tensorflow.python.types.core import GenericFunction
 
 from tests.test_efficientnet_v2 import TEST_PARAMS
 from tests.utils import get_inference_function
@@ -33,6 +31,9 @@ class TestONNXConversion(parameterized.TestCase):
 
     _tolerance = 1e-4
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     def tearDown(self) -> None:
         if os.path.exists(self.onnx_model_path):
             os.remove(self.onnx_model_path)
@@ -41,7 +42,13 @@ class TestONNXConversion(parameterized.TestCase):
     def test_model_onnx_conversion(
         self, model_fn: Callable, input_shape: Tuple[int, int]
     ):
-        tf.keras.backend.clear_session()
+        # Skip test if not enough RAM:
+        model_variant = self._testMethodName.split("_")[-1]
+        if not self._enough_memory_to_convert(model_variant):
+            self.skipTest(
+                "Not enough memory to convert to onnx. Need at least "
+                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
+            )
 
         # Load imagenet-21k-ft1k for XL variant
         weights_arg = "imagenet-21k-ft1k" if input_shape == (512, 512) else "imagenet"
@@ -50,14 +57,6 @@ class TestONNXConversion(parameterized.TestCase):
             input_shape=(*input_shape, 3),
             classifier_activation=None,
         )
-
-        # Skip test if not enough RAM:
-        model_variant = model.name.split("-")[-1]
-        if not self._enough_memory_to_convert(model_variant):
-            self.skipTest(
-                "Not enough memory to convert to onnx. Need at least "
-                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
-            )
 
         inference_func = get_inference_function(model, input_shape)
         self._convert_onnx(inference_func)
@@ -82,7 +81,7 @@ class TestONNXConversion(parameterized.TestCase):
         required_ram = MODEL_TO_MIN_MEMORY[model_name]
         return total_ram >= required_ram
 
-    def _convert_onnx(self, inference_func: GenericFunction):
+    def _convert_onnx(self, inference_func):
         model_proto, _ = tf2onnx.convert.from_function(
             inference_func,
             output_path=self.onnx_model_path,

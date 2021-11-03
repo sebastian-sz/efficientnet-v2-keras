@@ -2,7 +2,10 @@ lint:
 	pre-commit run --all-files
 
 test:
-	python -m unittest -f tests/*.py
+	@for f in $(shell ls tests/test*.py); do \
+  		echo $${f};\
+		python $${f};\
+		done
 
 generate_weight_hashes:
 	python scripts/generate_weight_hashes.py \
