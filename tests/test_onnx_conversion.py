@@ -1,5 +1,4 @@
 import os
-import shutil
 import tempfile
 from typing import Callable, Tuple
 
@@ -8,7 +7,6 @@ import tensorflow as tf
 import tf2onnx
 from absl.testing import absltest, parameterized
 from psutil import virtual_memory
-from tensorflow.python.types.core import GenericFunction
 
 from tests.test_efficientnet_v2 import TEST_PARAMS
 from tests.utils import get_inference_function
@@ -82,7 +80,7 @@ class TestONNXConversion(parameterized.TestCase):
         required_ram = MODEL_TO_MIN_MEMORY[model_name]
         return total_ram >= required_ram
 
-    def _convert_onnx(self, inference_func: GenericFunction):
+    def _convert_onnx(self, inference_func):
         model_proto, _ = tf2onnx.convert.from_function(
             inference_func,
             output_path=self.onnx_model_path,

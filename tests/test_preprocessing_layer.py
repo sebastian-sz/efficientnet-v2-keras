@@ -2,10 +2,20 @@ import tensorflow as tf
 from absl.testing import absltest
 
 from efficientnet_v2 import get_preprocessing_layer
+from tests import utils
 
 
 class TestPreprocessingLayer(absltest.TestCase):
     rng = tf.random.Generator.from_non_deterministic_state()
+
+    def setUp(self):
+        # TODO: drop support for TF < 2.4
+        if utils.tensorflow_version_lower_than(2.4):
+            message = (
+                "Please update Tensorflow to 2.4 or above. "
+                "Preprocessing layer are not supported for lower versions."
+            )
+            self.skipTest(message)
 
     def test_bx_variants_preprocessing_layer(self):
         def original_preprocess(image):
