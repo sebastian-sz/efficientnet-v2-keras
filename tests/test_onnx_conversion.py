@@ -31,6 +31,9 @@ class TestONNXConversion(parameterized.TestCase):
 
     _tolerance = 1e-4
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     def tearDown(self) -> None:
         if os.path.exists(self.onnx_model_path):
             os.remove(self.onnx_model_path)
@@ -39,7 +42,6 @@ class TestONNXConversion(parameterized.TestCase):
     def test_model_onnx_conversion(
         self, model_fn: Callable, input_shape: Tuple[int, int]
     ):
-        tf.keras.backend.clear_session()
 
         # Load imagenet-21k-ft1k for XL variant
         weights_arg = "imagenet-21k-ft1k" if input_shape == (512, 512) else "imagenet"

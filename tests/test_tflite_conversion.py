@@ -30,6 +30,9 @@ class TestTFLiteConversion(parameterized.TestCase):
 
     _tolerance = 1e-5
 
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     def tearDown(self) -> None:
         if os.path.exists(self.tflite_path):
             os.remove(self.tflite_path)

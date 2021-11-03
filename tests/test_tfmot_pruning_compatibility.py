@@ -8,6 +8,9 @@ from tests.test_efficientnet_v2 import TEST_PARAMS
 
 
 class TestEfficientNetV2PruningWrapper(parameterized.TestCase):
+    def setUp(self):
+        tf.keras.backend.clear_session()
+
     @parameterized.named_parameters(TEST_PARAMS)
     def test_tfmot_pruning_entire_model(
         self, model_fn: Callable, input_shape: Tuple[int, int]
