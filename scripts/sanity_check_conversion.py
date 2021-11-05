@@ -27,7 +27,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-b0.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-b0_224_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-b0_224_original_logits.npy",
         ),
     },
     {
@@ -37,7 +38,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-b1.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-b1_240_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-b1_240_original_logits.npy",
         ),
     },
     {
@@ -47,7 +49,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-b2.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-b2_260_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-b2_260_original_logits.npy",
         ),
     },
     {
@@ -57,7 +60,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-b3.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-b3_300_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-b3_300_original_logits.npy",
         ),
     },
     {
@@ -67,7 +71,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-s.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-s_384_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-s_384_original_logits.npy",
         ),
     },
     {
@@ -77,7 +82,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-m.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-m_480_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-m_480_original_logits.npy",
         ),
     },
     {
@@ -87,7 +93,8 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-l.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/efficientnetv2-l_480_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-l_480_original_logits.npy",
         ),
     },
     # 21k pretrained and 1k fine tuned variants:
@@ -98,7 +105,7 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-s-21k-ft1k.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-s_384_original_logits_21k-ft1k.npy",
         ),
     },
@@ -109,7 +116,7 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-m-21k-ft1k.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-m_480_original_logits_21k-ft1k.npy",
         ),
     },
@@ -120,7 +127,7 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-l-21k-ft1k.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-l_480_original_logits_21k-ft1k.npy",
         ),
     },
@@ -131,7 +138,7 @@ OUTPUT_CONSISTENCY_TEST_PARAMS = [
         "weights_path": os.path.join(ROOT_DIR, "weights/efficientnetv2-xl-21k-ft1k.h5"),
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-xl_512_original_logits_21k-ft1k.npy",
         ),
     },
@@ -202,7 +209,7 @@ FEATURE_EXTRACTION_TEST_PARAMS = [
 class TestLocalOutputConsistency(parameterized.TestCase):
     """Compare converted weight model outputs with original outputs."""
 
-    image_path = os.path.join(ROOT_DIR, "tests/assets/panda.jpg")
+    image_path = os.path.join(ROOT_DIR, "test_efficientnet_v2/assets/panda.jpg")
     image = tf.image.decode_png(tf.io.read_file(image_path))
 
     @parameterized.named_parameters(OUTPUT_CONSISTENCY_TEST_PARAMS)

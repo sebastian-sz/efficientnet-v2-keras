@@ -25,7 +25,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-b0_224_original_logits.npy",
         ),
     },
@@ -36,7 +36,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-b1_240_original_logits.npy",
         ),
     },
@@ -47,7 +47,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-b2_260_original_logits.npy",
         ),
     },
@@ -58,7 +58,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-b3_300_original_logits.npy",
         ),
     },
@@ -69,7 +69,8 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/" "efficientnetv2-s_384_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-s_384_original_logits.npy",
         ),
     },
     {
@@ -79,7 +80,8 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/" "efficientnetv2-m_480_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-m_480_original_logits.npy",
         ),
     },
     {
@@ -89,7 +91,8 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/" "efficientnetv2-l_480_original_logits.npy",
+            "test_efficientnet_v2/assets/original_outputs/"
+            "efficientnetv2-l_480_original_logits.npy",
         ),
     },
     {
@@ -99,7 +102,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-s_384_original_logits_21k-ft1k.npy",
         ),
     },
@@ -110,7 +113,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-m_480_original_logits_21k-ft1k.npy",
         ),
     },
@@ -121,7 +124,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-l_480_original_logits_21k-ft1k.npy",
         ),
     },
@@ -132,7 +135,7 @@ OUTPUT_TEST_PARAMS = [
         "weights_arg": "imagenet-21k-ft1k",
         "original_outputs": os.path.join(
             ROOT_DIR,
-            "tests/assets/original_outputs/"
+            "test_efficientnet_v2/assets/original_outputs/"
             "efficientnetv2-xl_512_original_logits_21k-ft1k.npy",
         ),
     },
@@ -140,7 +143,7 @@ OUTPUT_TEST_PARAMS = [
 
 
 class TestKerasVSOriginalOutputConsistency(parameterized.TestCase):
-    image_path = os.path.join(ROOT_DIR, "tests/assets/panda.jpg")
+    image_path = os.path.join(ROOT_DIR, "test_efficientnet_v2/assets/panda.jpg")
     image = tf.image.decode_png(tf.io.read_file(image_path))
     _tolerance = 1e-5
 
