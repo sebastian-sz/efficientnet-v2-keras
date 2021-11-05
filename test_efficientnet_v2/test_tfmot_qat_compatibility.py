@@ -4,7 +4,7 @@ import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from absl.testing import absltest, parameterized
 
-from tests.test_efficientnet_v2 import TEST_PARAMS
+from test_efficientnet_v2.test_model import TEST_PARAMS
 
 
 class TestEfficientNetV2QATWrap(parameterized.TestCase):

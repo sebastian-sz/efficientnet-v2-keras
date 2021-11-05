@@ -7,8 +7,8 @@ import tensorflow as tf
 from absl.testing import absltest, parameterized
 from psutil import virtual_memory
 
-from tests.test_efficientnet_v2 import TEST_PARAMS
-from tests.utils import get_inference_function
+from test_efficientnet_v2.test_model import TEST_PARAMS
+from test_efficientnet_v2.utils import get_inference_function
 
 # Some conversions are RAM hungry and will crash CI on smaller machines. We skip those
 # tests, not to break entire CI job.
