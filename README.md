@@ -1,6 +1,9 @@
 EfficientNetV2 models rewritten in Keras functional API.
 
 ### Changelog:
+* Feb 2022: 
+  * As of 2.8 Tensorflow release, the models in this repository (apart from XL variant) are accessible through `keras.applications.efficientnet_v2`  
+You are free to use this repo or Keras directly.
 * Nov 2021: 
   * added more weights variants from original repo.
   * added option to manually get preprocessing layer.
