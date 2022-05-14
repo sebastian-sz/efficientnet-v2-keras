@@ -1,5 +1,12 @@
 import tensorflow as tf
-from tensorflow.keras.layers.experimental.preprocessing import Normalization, Rescaling
+
+if tf.__version__ < "2.8":
+    from tensorflow.keras.layers.experimental.preprocessing import (
+        Normalization,
+        Rescaling,
+    )
+else:
+    from tensorflow.keras.layers import Normalization, Rescaling
 
 
 def get_preprocessing_layer(variant: str):
