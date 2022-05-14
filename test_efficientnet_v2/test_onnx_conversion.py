@@ -2,14 +2,15 @@ import os
 import tempfile
 from typing import Callable, Tuple
 
+import numpy as np
 import onnxruntime
 import tensorflow as tf
 import tf2onnx
 from absl.testing import absltest, parameterized
 from psutil import virtual_memory
 
+from test_efficientnet_v2 import utils
 from test_efficientnet_v2.test_model import TEST_PARAMS
-from test_efficientnet_v2.utils import get_inference_function
 
 # Some conversions are RAM hungry and will crash CI on smaller machines. We skip those
 # tests, not to break entire CI job.
@@ -29,12 +30,10 @@ class TestONNXConversion(parameterized.TestCase):
     rng = tf.random.Generator.from_non_deterministic_state()
     onnx_model_path = os.path.join(tempfile.mkdtemp(), "model.onnx")
 
-    _tolerance = 1e-4
-
     def setUp(self):
         tf.keras.backend.clear_session()
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         if os.path.exists(self.onnx_model_path):
             os.remove(self.onnx_model_path)
 
@@ -50,30 +49,17 @@ class TestONNXConversion(parameterized.TestCase):
                 f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
             )
 
-        # Load imagenet-21k-ft1k for XL variant
-        weights_arg = "imagenet-21k-ft1k" if input_shape == (512, 512) else "imagenet"
-        model = model_fn(
-            weights=weights_arg,
-            input_shape=(*input_shape, 3),
-            classifier_activation=None,
-        )
-
-        inference_func = get_inference_function(model, input_shape)
+        model = model_fn(weights=None, input_shape=(*input_shape, 3))
+        inference_func = utils.get_inference_function(model, input_shape)
         self._convert_onnx(inference_func)
 
-        self.assertTrue(os.path.isfile(self.onnx_model_path))
-
-        # Compare outputs:
-        mock_input = self.rng.uniform(shape=(1, *input_shape, 3), dtype=tf.float32)
-        original_output = model(mock_input, training=False)
-
+        # Verify output:
+        dummy_inputs = self.rng.uniform(shape=(1, *input_shape, 3), dtype=tf.float32)
         onnx_session = onnxruntime.InferenceSession(self.onnx_model_path)
-        onnx_inputs = {onnx_session.get_inputs()[0].name: mock_input.numpy()}
-        onnx_output = onnx_session.run(None, onnx_inputs)
-
-        tf.debugging.assert_near(
-            original_output, onnx_output, atol=self._tolerance, rtol=self._tolerance
-        )
+        onnx_inputs = {onnx_session.get_inputs()[0].name: dummy_inputs.numpy()}
+        onnx_output = onnx_session.run(None, onnx_inputs)[0]
+        self.assertTrue(isinstance(onnx_output, np.ndarray))
+        self.assertEqual(onnx_output.shape, (1, 1000))
 
     @staticmethod
     def _enough_memory_to_convert(model_name: str) -> bool:
