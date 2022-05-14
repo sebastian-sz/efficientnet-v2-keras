@@ -2,7 +2,7 @@ lint:
 	pre-commit run --all-files
 
 test:
-	python -m unittest -v -f test_efficientnet_v2/test*.py
+	pytest -x test_efficientnet_v2/test_*  # Run all tests except check_output_consistency.py
 
 generate_weight_hashes:
 	python scripts/generate_weight_hashes.py \
