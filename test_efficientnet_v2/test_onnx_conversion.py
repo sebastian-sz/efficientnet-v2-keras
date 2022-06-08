@@ -43,10 +43,11 @@ class TestONNXConversion(parameterized.TestCase):
     ):
         # Skip test if not enough RAM:
         model_variant = self._testMethodName.split("_")[-1]
-        if not self._enough_memory_to_convert(model_variant):
+        minimum_required_ram = MODEL_TO_MIN_MEMORY[model_variant]
+        if not utils.is_enough_memory(minimum_required_ram):
             self.skipTest(
-                "Not enough memory to convert to onnx. Need at least "
-                f"{MODEL_TO_MIN_MEMORY[model_variant]} GB. Skipping... ."
+                "Not enough memory to perform this test. Need at least "
+                f"{minimum_required_ram} GB. Skipping... ."
             )
 
         model = model_fn(weights=None, input_shape=(*input_shape, 3))
