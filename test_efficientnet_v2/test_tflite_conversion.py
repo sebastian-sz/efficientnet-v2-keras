@@ -78,12 +78,6 @@ class TestTFLiteConversion(parameterized.TestCase):
 
         return interpreter.get_tensor(output_details[0]["index"])
 
-    @staticmethod
-    def _enough_memory_to_convert(model_name: str) -> bool:
-        total_ram = virtual_memory().total / (1024.0**3)
-        required_ram = MODEL_TO_MIN_MEMORY[model_name]
-        return total_ram >= required_ram
-
 
 if __name__ == "__main__":
     absltest.main()
