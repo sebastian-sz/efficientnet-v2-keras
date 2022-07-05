@@ -6,9 +6,11 @@ from typing import Any, Callable, Dict, List, Tuple, Union
 
 import tensorflow as tf
 from absl import logging
+from packaging import version
 from tensorflow.python.keras import backend
 
-if tf.__version__ < "2.8":  # Keras has been moved to separate repository
+# Keras has been moved to separate repository
+if version.parse(tf.__version__) < version.parse("2.8"):
     from tensorflow.python.keras.applications import imagenet_utils
 else:
     from keras.applications import imagenet_utils
