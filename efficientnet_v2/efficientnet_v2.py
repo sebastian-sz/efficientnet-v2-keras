@@ -7,7 +7,6 @@ from typing import Any, Callable, Dict, List, Tuple, Union
 import tensorflow as tf
 from absl import logging
 from packaging import version
-from tensorflow.python.keras import backend
 
 # Keras has been moved to separate repository in 2.9
 if version.parse(tf.__version__) < version.parse("2.8"):
@@ -22,6 +21,8 @@ if version.parse(tf.__version__) < version.parse("2.12"):
 else:
     from tensorflow.keras import backend
     from keras.utils import layer_utils
+
+from tensorflow.python.lib.io import file_io
 
 from efficientnet_v2.blocks_args import BLOCKS_ARGS
 
